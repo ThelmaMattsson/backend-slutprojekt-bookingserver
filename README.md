@@ -1,4 +1,5 @@
 **BACKEND SLUTPROJEKT - GYMCLASS BOOKING API**
+
 Projektet är ett REST API byggt med Express och TypeScript. API:et hanterar ett bokningssystem för gruppträningspass där users, istructors, locations, classes och bookings kan hanteras. Projektet använder MySQL som databas och följer en layered architecture med separation of concerns. 
 
 **TECH STACK**
@@ -9,12 +10,14 @@ Projektet är ett REST API byggt med Express och TypeScript. API:et hanterar ett
 - mysql2
 
 **FUNKTIONALITET**
+
 API:et stödjer CRUD-operationer för resurserna:
 -Users
 -Classes
 -Instructors
 -Locations
 -Bookings
+
 
 EX på funktionalitet:
 -Hämta alla klasser
@@ -26,6 +29,7 @@ EX på funktionalitet:
 -Visa schemalagda klasser med instruktör, lokal och antal bokningar
 
 **INSTALLATION**
+
 1. Klona repot
   git clone <repo-url>
 
