@@ -7,6 +7,12 @@ const classesRouter = express.Router();
 
 classesRouter.get("/", classesController.getAllClasses);
 
+classesRouter.get("/stats/booking", classesController.getClassBookingStats);
+
+classesRouter.get("/schedule", classesController.getClassesSchedule);
+
+classesRouter.get("/date/:date", classesController.getClassesDate);
+
 classesRouter.get("/:id", classesController.getGymClassById);
 
 classesRouter.post("/", classesController.createClass);

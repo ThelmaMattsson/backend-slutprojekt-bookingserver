@@ -5,6 +5,8 @@ const usersRouter = express.Router();
 
 usersRouter.get("/", usersController.getAllUsers);
 
+usersRouter.get("/count", usersController.usersCount);
+
 usersRouter.get("/:id", usersController.getUserById);
 
 usersRouter.post("/", usersController.createUser);

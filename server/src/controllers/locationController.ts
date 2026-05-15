@@ -1,21 +1,16 @@
 import { Request, Response } from "express";
 import * as locationService from "../services/locationService.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 
-export const getAllLocations = async (req: Request, res: Response) => {
-  try {
+export const getAllLocations = asyncHandler(
+  async (req: Request, res: Response) => {
     const locations = await locationService.getAllLocations();
     res.json(locations);
-  } catch (err) {
-    console.error("Error fetching locations: ", (err as Error).message);
-    res.status(500).json({
-      error: "Failed to fetch locations",
-      details: (err as Error).message,
-    });
-  }
-};
+  },
+);
 
-export const getLocationById = async (req: Request, res: Response) => {
-  try {
+export const getLocationById = asyncHandler(
+  async (req: Request, res: Response) => {
     const id = Number(req.params.id);
 
     if (isNaN(id)) {
@@ -28,28 +23,19 @@ export const getLocationById = async (req: Request, res: Response) => {
       return res.status(404).json({ error: "Location not found" });
     }
     res.json(location);
-  } catch (err) {
-    console.error("Error fetching location: ", (err as Error).message);
-    res.status(500).json({
-      error: "Failed to fetch location.",
-      details: (err as Error).message,
-    });
-  }
-};
+  },
+);
 
-export const createLocation = async (req: Request, res: Response) => {
-  try {
+export const createLocation = asyncHandler(
+  async (req: Request, res: Response) => {
     const location = await locationService.createLocation(req.body);
 
     res.status(201).json(location);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to create location" });
-  }
-};
+  },
+);
 
-export const patchLocation = async (req: Request, res: Response) => {
-  try {
+export const patchLocation = asyncHandler(
+  async (req: Request, res: Response) => {
     const id = Number(req.params.id);
 
     if (isNaN(id)) {
@@ -63,15 +49,11 @@ export const patchLocation = async (req: Request, res: Response) => {
     }
 
     res.json(updatedLocation);
-  } catch (err) {
-    console.error(err);
+  },
+);
 
-    res.status(500).json({ error: "Failed to patch location" });
-  }
-};
-
-export const deleteLocation = async (req: Request, res: Response) => {
-  try {
+export const deleteLocation = asyncHandler(
+  async (req: Request, res: Response) => {
     const id = Number(req.params.id);
 
     if (isNaN(id)) {
@@ -85,9 +67,5 @@ export const deleteLocation = async (req: Request, res: Response) => {
     }
 
     res.status(204).send();
-  } catch (err) {
-    console.error(err);
-
-    res.status(500).json({ error: "Failed to delete location." });
-  }
-};
+  },
+);

@@ -1,22 +1,17 @@
 import { Request, Response } from "express";
 import * as classesService from "../services/classesService.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 
-export const getAllClasses = async (req: Request, res: Response) => {
-  try {
+export const getAllClasses = asyncHandler(
+  async (req: Request, res: Response) => {
     const classes = await classesService.getAllClasses();
     res.json(classes);
-  } catch (err) {
-    console.error("Error fetching classes: ", (err as Error).message);
-    res.status(500).json({
-      error: "Failed to fetch classes",
-      details: (err as Error).message,
-    });
-  }
-};
+  },
+);
 
 //GET /api/classes/:id - en specifik klass
-export const getGymClassById = async (req: Request, res: Response) => {
-  try {
+export const getGymClassById = asyncHandler(
+  async (req: Request, res: Response) => {
     const id = Number(req.params.id);
 
     if (isNaN(id)) {
@@ -29,89 +24,91 @@ export const getGymClassById = async (req: Request, res: Response) => {
       return res.status(404).json({ error: "Class not found" });
     }
     res.json(gymClass);
-  } catch (err) {
-    console.error("Error fetching class: ", (err as Error).message);
-    res.status(500).json({
-      error: "Failed to fetch class.",
-      details: (err as Error).message,
-    });
+  },
+);
+
+export const createClass = asyncHandler(async (req: Request, res: Response) => {
+  const newClass = await classesService.createClass(req.body);
+
+  res.status(201).json(newClass);
+});
+
+export const updateClass = asyncHandler(async (req: Request, res: Response) => {
+  const id = Number(req.params.id);
+
+  if (isNaN(id)) {
+    return res.status(400).json({ error: "Invalid id" });
   }
-};
 
-export const createClass = async (req: Request, res: Response) => {
-  //validera datum ?? ej dåtid, ej tusen år i framtiden
-  try {
-    const newClass = await classesService.createClass(req.body);
+  const updatedClass = await classesService.updateClass(id, req.body);
 
-    res.status(201).json(newClass);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to create class" });
+  if (!updatedClass) {
+    return res.status(404).json({ error: "Class not found." });
   }
-};
 
-export const updateClass = async (req: Request, res: Response) => {
-  try {
-    const id = Number(req.params.id);
+  res.json(updatedClass);
+});
 
-    if (isNaN(id)) {
-      return res.status(400).json({ error: "Invalid id" });
-    }
+export const patchClass = asyncHandler(async (req: Request, res: Response) => {
+  const id = Number(req.params.id);
 
-    const updatedClass = await classesService.updateClass(id, req.body);
-
-    if (!updatedClass) {
-      return res.status(404).json({ error: "Class not found." });
-    }
-
-    res.json(updatedClass);
-  } catch (err) {
-    console.error(err);
-
-    res.status(500).json({ error: "Failed to update class" });
+  if (isNaN(id)) {
+    return res.status(400).json({ error: "Invalid id" });
   }
-};
 
-export const patchClass = async (req: Request, res: Response) => {
-  try {
-    const id = Number(req.params.id);
+  const updatedClass = await classesService.patchClass(id, req.body);
 
-    if (isNaN(id)) {
-      return res.status(400).json({ error: "Invalid id" });
-    }
-
-    const updatedClass = await classesService.patchClass(id, req.body);
-
-    if (!updatedClass) {
-      return res.status(404).json({ error: "Class not found" });
-    }
-
-    res.json(updatedClass);
-  } catch (err) {
-    console.error(err);
-
-    res.status(500).json({ error: "Failed to patch class" });
+  if (!updatedClass) {
+    return res.status(404).json({ error: "Class not found" });
   }
-};
 
-export const deleteClass = async (req: Request, res: Response) => {
-  try {
-    const id = Number(req.params.id);
+  res.json(updatedClass);
+});
 
-    if (isNaN(id)) {
-      return res.status(400).json({ error: "Invalid id" });
-    }
+export const deleteClass = asyncHandler(async (req: Request, res: Response) => {
+  const id = Number(req.params.id);
 
-    const deleted = await classesService.deleteClass(id);
-
-    if (!deleted) {
-      return res.status(404).json({ error: "Class not found" });
-    }
-
-    res.status(204).send();
-  } catch (err) {
-    console.error(err);
-
-    res.status(500).json({ error: "Failed to delete class." });
+  if (isNaN(id)) {
+    return res.status(400).json({ error: "Invalid id" });
   }
-};
+
+  const deleted = await classesService.deleteClass(id);
+
+  if (!deleted) {
+    return res.status(404).json({ error: "Class not found" });
+  }
+
+  res.status(204).send();
+});
+
+export const getClassBookingStats = asyncHandler(
+  async (req: Request, res: Response) => {
+    const stats = await classesService.getClassBookingStats();
+
+    res.status(200).json(stats);
+  },
+);
+
+export const getClassesDate = asyncHandler(
+  async (req: Request, res: Response) => {
+    const date = req.params.date as string;
+
+    if (!date) {
+      return res.status(400).json({
+        error: "Date is required",
+      });
+    }
+
+    const classes = await classesService.getClassesDate(date);
+    console.log("DATE PARAM:", req.params.date);
+    console.log("RESULT:", classes);
+    res.status(200).json(classes);
+  },
+);
+
+export const getClassesSchedule = asyncHandler(
+  async (req: Request, res: Response) => {
+    const classes = await classesService.getClassesSchedule();
+    res.status(200).json(classes);
+  },
+);

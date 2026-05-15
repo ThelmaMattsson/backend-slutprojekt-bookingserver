@@ -1,5 +1,5 @@
 import * as classesModel from "../models/classesModel.js";
-import { GymClass } from "../types/IGymClass.js";
+import { GymClass, IDate } from "../types/IGymClass.js";
 
 export const getAllClasses = async () => {
   const classes = await classesModel.findAllClasses();
@@ -42,4 +42,33 @@ export const patchClass = async (id: number, data: Partial<GymClass>) => {
 
 export const deleteClass = async (id: number) => {
   return await classesModel.deleteClass(id);
+};
+
+export const getClassBookingStats = async () => {
+  return await classesModel.getClassBookingStats();
+};
+
+export const getClassesDate = async (date: string) => {
+  return await classesModel.findClassesDate(date);
+};
+
+export const getClassesSchedule = async () => {
+  const classes = await classesModel.findClassesSchedule();
+
+  return classes.map((gymClass) => {
+    const start = new Date(gymClass.start_time);
+    const end = new Date(gymClass.end_time);
+    const duration = (end.getTime() - start.getTime()) / 1000 / 60;
+
+    return {
+      class_id: gymClass.class_id,
+      title: gymClass.title,
+      start_time: gymClass.start_time,
+      duration: duration,
+      instructor: gymClass.fnamn,
+      location: gymClass.location,
+      max_participants: gymClass.max_participants,
+      booked: gymClass.booked,
+    };
+  });
 };

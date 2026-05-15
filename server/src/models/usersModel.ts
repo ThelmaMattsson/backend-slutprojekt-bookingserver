@@ -57,3 +57,12 @@ export const deleteUser = async (id: number) => {
 
   return result.affectedRows > 0;
 };
+
+export const usersCount = async () => {
+  const [rows] = await pool.execute(
+    `
+        SELECT COUNT(*) AS total_users FROM users
+        `,
+  );
+  return rows;
+};

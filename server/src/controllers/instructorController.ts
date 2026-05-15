@@ -1,23 +1,18 @@
 import { Request, Response } from "express";
 import * as instructorService from "../services/instructorService.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 
-//hämta alla instructors
-export const getAllInstructors = async (req: Request, res: Response) => {
-  try {
+//hämta alla instructors ist för try catch med console.error och res.status(500) används middleware errorhandler och asynchandler
+export const getAllInstructors = asyncHandler(
+  async (req: Request, res: Response) => {
     const instructors = await instructorService.getAllInstructors();
     res.json(instructors);
-  } catch (err) {
-    console.error("Error fetching instructors: ", (err as Error).message);
-    res.status(500).json({
-      error: "Failed to fetch instructors",
-      details: (err as Error).message,
-    });
-  }
-};
+  },
+);
 
 //hämta instructors med id
-export const getInstructorById = async (req: Request, res: Response) => {
-  try {
+export const getInstructorById = asyncHandler(
+  async (req: Request, res: Response) => {
     const id = Number(req.params.id);
 
     if (isNaN(id)) {
@@ -30,30 +25,21 @@ export const getInstructorById = async (req: Request, res: Response) => {
       return res.status(404).json({ error: "Instructor not found" });
     }
     res.json(instructor);
-  } catch (err) {
-    console.error("Error fetching instructor: ", (err as Error).message);
-    res.status(500).json({
-      error: "Failed to fetch instructor.",
-      details: (err as Error).message,
-    });
-  }
-};
+  },
+);
 
 //create instructor
-export const createInstructor = async (req: Request, res: Response) => {
-  try {
+export const createInstructor = asyncHandler(
+  async (req: Request, res: Response) => {
     const newInstructor = await instructorService.createInstructor(req.body);
 
     res.status(201).json(newInstructor);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to create instructor" });
-  }
-};
+  },
+);
 
 //patch
-export const patchInstructor = async (req: Request, res: Response) => {
-  try {
+export const patchInstructor = asyncHandler(
+  async (req: Request, res: Response) => {
     const id = Number(req.params.id);
 
     if (isNaN(id)) {
@@ -70,16 +56,12 @@ export const patchInstructor = async (req: Request, res: Response) => {
     }
 
     res.json(updatedInstructor);
-  } catch (err) {
-    console.error(err);
-
-    res.status(500).json({ error: "Failed to patch instructor" });
-  }
-};
+  },
+);
 
 //delete instructor
-export const deleteInstructor = async (req: Request, res: Response) => {
-  try {
+export const deleteInstructor = asyncHandler(
+  async (req: Request, res: Response) => {
     const id = Number(req.params.id);
 
     if (isNaN(id)) {
@@ -93,9 +75,5 @@ export const deleteInstructor = async (req: Request, res: Response) => {
     }
 
     res.status(204).send();
-  } catch (err) {
-    console.error(err);
-
-    res.status(500).json({ error: "Failed to delete instructor." });
-  }
-};
+  },
+);

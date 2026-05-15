@@ -34,3 +34,9 @@ export const patchUser = async (id: number, data: Partial<IUser>) => {
 export const deleteUser = async (id: number) => {
   return await usersModel.deleteUser(id);
 };
+
+export const usersCount = async () => {
+  const rows = await usersModel.usersCount();
+
+  return rows;
+};

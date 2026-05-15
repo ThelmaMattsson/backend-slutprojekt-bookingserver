@@ -20,3 +20,18 @@ export interface ICreateGymClass extends RowDataPacket {
   instructor_id: number;
   location_id: number;
 }
+
+export interface IDate extends RowDataPacket {
+  date: string;
+}
+
+export interface IClassSchedule extends RowDataPacket {
+  class_id: number;
+  title: string;
+  start_time: Date;
+  end_time: Date;
+  location: string;
+  fnamn: string;
+  max_participants: number;
+  booked: number;
+}

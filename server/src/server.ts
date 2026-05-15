@@ -6,8 +6,8 @@ import usersRouter from "./routes/usersRoutes.js";
 import instructorRouter from "./routes/instructorRoutes.js";
 import locationRouter from "./routes/locationRoutes.js";
 import bookingRouter from "./routes/bookingRoutes.js";
+import { errorHandler } from "./middleware/errorHandler.js";
 
-console.log("NYYYYYY");
 const app = express();
 const PORT = process.env.PORT ?? 3000;
 
@@ -32,11 +32,29 @@ app.use((req, res) => {
   res.status(404).json({ error: "Sidan hittades inte." });
 });
 
+app.use(errorHandler);
+
 try {
   await pool.getConnection();
   console.log("Ansluten till MySQL");
-  app.listen(PORT, () => {
+  const server = app.listen(PORT, () => {
     console.log(`Servern körs på http://localhost:${PORT}`);
+  });
+
+  //graceful shutdown
+  process.on("SIGINT", async () => {
+    console.log("\nStänger ner servern gracefully...");
+
+    try {
+      await pool.end();
+      server.close(() => {
+        console.log("Server och databas stängdes ner korrekt.");
+        process.exit(0);
+      });
+    } catch (err) {
+      console.error("Fel vid shutdown: ", err);
+      process.exit(1);
+    }
   });
 } catch (err) {
   console.error("Kunde inte ansluta till MySQL: ", (err as Error).message);
